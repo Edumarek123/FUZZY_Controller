@@ -27,10 +27,10 @@ unsigned long PULSOS_ENCODER = 0;
 ControladorFuzzy CC(MIN_PWM, MAX_PWM);
 
 // Referencia
-Referencia REFERENCIA(0, VELOCIDADE_MAX, onda_senoidal);
+Referencia REFERENCIA(0, VELOCIDADE_MAX, onda_triangular);
 
 // Funcoes
-void IRAM_ATTR interrupcao_encoder() {PULSOS_ENCODER++;}
+void IRAM_ATTR interrupcao_encoder() { PULSOS_ENCODER++; }
 float captura_velocidade();
 void imprimi_informacoes(float velocidadeAtual, float sinalControle, float referencia, bool monitorSerial);
 
@@ -55,7 +55,7 @@ void setup()
   // CONTROLADOR
   CC.centrosEk = new _ponto[N_Regras]{-4000, -2000, 0, 2000, 4000};
   CC.centrosDEk = new _ponto[N_Regras]{-400, -200, 0, 200, 400};
-  CC.centrosDU = new _ponto[N_Regras]{-40, -20, 0, 20, 40};
+  CC.centrosDU = new _ponto[N_Regras]{-30, -10, 0, 10, 30};
   CC.baseEk = new _ponto[N_Regras]{3000, 3000, 3000, 3000, 3000};
   CC.baseDEk = new _ponto[N_Regras]{300, 300, 300, 300, 300};
 
@@ -73,14 +73,14 @@ void loop()
   ledcWrite(CANAL_PWM, MAX_PWM - sinalControle);
 
   imprimi_informacoes(velocidadeAtual, sinalControle, REFERENCIA.modulo, false);
-  
+
   REFERENCIA.atualiza_referencia();
 }
 
 float captura_velocidade()
 {
   PULSOS_ENCODER = 0; // reseta contador
-  delay(80);        // conta TA_S de pulsos
+  delay(80);          // conta TA_S de pulsos
   return (COEFICIENTE_VELOCIDADE * PULSOS_ENCODER);
 }
 
