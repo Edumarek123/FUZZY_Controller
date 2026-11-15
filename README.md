@@ -1,9 +1,26 @@
-# FUZZY_Controller
+# Fuzzy Controller for ESP32
 
-Biblioteca desenvolvida para aplicação de controlador baseado em lógica fuzzy para arquitetura esp32. Este tipo de controlador pode ser facilmente implementado, definindo seus parâmetros de forma experimental.
+A fuzzy-logic controller library developed for applications based on the ESP32 architecture.
 
+## Overview
 
+The project provides a structure for implementing fuzzy control and configuring its parameters experimentally for a target system.
 
+## Technologies and concepts
 
+- ESP32
+- Embedded C/C++
+- Fuzzy logic
+- Experimental controller tuning
 
-Autor(author): Eduardo Marek Data(date): 03/2023
+## Repository contents
+
+The repository includes an Arduino sketch and supporting source files under `src/`.
+
+## Purpose
+
+To make fuzzy-control experiments easier to implement on ESP32-based systems.
+
+## Status
+
+Embedded-control library / experimental project. The controller must be configured and validated for each application.
