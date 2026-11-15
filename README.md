@@ -2,59 +2,95 @@
 
 # Fuzzy Controller for ESP32
 
-**A fuzzy-logic controller implementation targeting ESP32-based systems.**
+**A fuzzy-logic speed-control experiment using encoder feedback and PWM actuation.**
 
 ![Platform](https://img.shields.io/badge/platform-ESP32-E7352C?logo=espressif&logoColor=white)
 ![Language](https://img.shields.io/badge/language-Arduino%20C%2B%2B-00979D?logo=arduino&logoColor=white)
-![Method](https://img.shields.io/badge/method-fuzzy%20logic-6f42c1)
-![Status](https://img.shields.io/badge/status-library%20prototype-lightgrey)
+![Method](https://img.shields.io/badge/method-fuzzy%20control-6f42c1)
+![Status](https://img.shields.io/badge/status-experimental-orange)
 
 </div>
 
+## Contents
+
+- [Overview](#overview)
+- [Control loop](#control-loop)
+- [Controller configuration](#controller-configuration)
+- [Hardware pinout](#hardware-pinout)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Tuning and validation](#tuning-and-validation)
+- [Limitations](#limitations)
+- [License](#license)
+
 ## Overview
 
-FUZZY_Controller is a fuzzy-logic control project for the ESP32 architecture. The project is intended to make it possible to implement a fuzzy controller and configure its parameters experimentally for a particular application.
+FUZZY_Controller is an ESP32-based fuzzy-logic control experiment. The sketch measures motor speed from encoder pulses, calculates a control signal with a fuzzy controller, and updates a PWM output.
 
-Fuzzy logic is useful in control problems where rules and membership functions can express behavior that is difficult to describe with a single linear model.
+The repository separates fuzzy-logic and reference-signal code under `src/`.
 
-## Repository contents
+## Control loop
 
-```text
-.
-├── FUZZY_Controller.ino
-├── src/
-└── README.md
+```mermaid
+flowchart LR
+    A[Reference signal] --> C[Fuzzy controller]
+    B[Encoder speed] --> C
+    C --> D[PWM output]
+    D --> E[Motor / plant]
+    E --> B
 ```
 
-## Technology and concepts
+## Controller configuration
 
-- ESP32 microcontroller
-- Arduino-compatible C++
-- Fuzzy logic control
-- Experimental parameter configuration
+The sketch currently defines:
 
-## Getting started
+| Parameter | Value |
+|---|---:|
+| PWM frequency | 1 kHz |
+| PWM resolution | 10 bits |
+| Sampling interval | 80 ms |
+| Encoder pulses per revolution | 3 |
+| Reference profile | Triangular wave |
+| Number of fuzzy rules | 5 (via `N_Regras`) |
 
-### Requirements
+Membership-function centers and bases are initialized directly in `FUZZY_Controller.ino`. These values are experimental and should be tuned for the actual motor, sensor, and load.
+
+## Hardware pinout
+
+| Signal | ESP32 GPIO |
+|---|---:|
+| Motor PWM | 25 |
+| Motor direction | 33 |
+| Encoder input | 22 |
+
+Verify the motor driver, encoder voltage, common ground, and supply requirements before connecting the hardware.
+
+## Requirements
 
 - ESP32 development board
+- DC motor and suitable motor driver
+- Encoder
 - Arduino IDE or compatible ESP32 toolchain
-- USB connection and board support package
 
-### Open the sketch
+## Setup
 
-Open `FUZZY_Controller.ino` in the Arduino IDE, configure the target ESP32 board, and inspect the source files under `src/` for the implementation details.
+1. Clone the repository.
+2. Open `FUZZY_Controller.ino`.
+3. Install/select ESP32 board support.
+4. Inspect the source files in `src/`.
+5. Confirm pin assignments and electrical limits.
+6. Compile and upload to the selected board.
 
-The repository description does not specify a universal sensor, actuator, pin assignment, or wiring diagram. These must be matched to the intended application before uploading the firmware.
+The sketch uses ESP32 LEDC APIs whose availability can vary between Arduino-core versions. Confirm compatibility with your installed core.
 
-## Tuning and application
+## Tuning and validation
 
-Fuzzy-controller parameters should be selected and tested against the target plant. Begin with conservative actuator limits and validate behavior under controlled conditions.
+Tune membership-function centers and bases against the target plant. Record reference speed, measured speed, control output, sampling period, and load conditions for each test.
 
-## Project status
+## Limitations
 
-Embedded-control library / prototype. Application-specific configuration and validation are required.
+This repository documents an experimental controller, not a general-purpose certified control library. Stability and performance depend on the physical system and must be validated before deployment.
 
 ## License
 
-No license file was identified in the repository. Contact the author before redistributing or reusing this project.
+No `LICENSE` file is currently included. Unless a license is added, reuse and redistribution permissions are not granted by this repository.
